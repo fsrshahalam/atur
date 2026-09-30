@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ATUR — Academic Timetable Utility &amp; Registry</title>
+<meta name="description" content="ATUR schedules final assessments for the Faculty of Sports Science and Recreation, UiTM. Resource persons propose dates, ATUR checks every program and semester for clashes, and admins approve the final schedule in one place.">
+<meta name="theme-color" content="#0b1324">
+<meta property="og:title" content="ATUR — Every exam date, clash-free.">
+<meta property="og:description" content="Final assessment scheduling for the Faculty of Sports Science and Recreation, UiTM.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Cg fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 4)'%3E%3Crect x='3' y='4.5' width='18' height='16.5' rx='3'/%3E%3Cpath d='M3 9.5h18M8 2.5v4M16 2.5v4M8.5 15l2.5 2.5 4.5-5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1d4ed8; --primary-light: #2563eb; --primary-dark: #1e40af;
+  --primary-50: #eff6ff; --primary-100: #dbeafe; --primary-200: #bfdbfe;
+  --accent-grad: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+  --success: #047857; --success-bg: #ecfdf5; --success-bd: #a7f3d0;
+  --warning: #b45309; --warning-bg: #fffbeb; --warning-bd: #fde68a;
+  --danger: #b91c1c; --danger-bg: #fef2f2; --danger-bd: #fecaca;
+  --ink: #0b1324; --ink-2: #111a2e;
+  --bg: #f6f7f9; --surface: #fff; --border: #e4e7ec; --border-light: #eef0f3;
+  --text: #0f172a; --text-2: #334155; --text-muted: #5b6475;
+  --radius-sm: 10px; --radius: 14px; --radius-lg: 18px; --radius-xl: 24px;
+  --shadow-sm: 0 1px 3px rgba(16,24,40,.06), 0 1px 2px rgba(16,24,40,.04);
+  --shadow: 0 4px 12px -2px rgba(16,24,40,.08), 0 2px 4px -2px rgba(16,24,40,.04);
+  --shadow-lg: 0 24px 48px -12px rgba(16,24,40,.22), 0 8px 16px -8px rgba(16,24,40,.08);
+  --ease: cubic-bezier(.2,.8,.2,1);
+  --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --max: 1160px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { font-family: var(--font); color: var(--text); background: var(--surface); line-height: 1.6; letter-spacing: -.006em; }
+img, svg { display: block; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid var(--primary-light); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+.skip { position: absolute; left: -999px; top: 8px; background: #fff; padding: 10px 14px; border-radius: 8px; z-index: 100; }
+.skip:focus { left: 8px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; padding: 0 22px; border-radius: 12px; font-weight: 600; font-size: .95rem; transition: transform .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease); white-space: nowrap; }
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.btn-primary { background: var(--accent-grad); color: #fff; box-shadow: 0 8px 20px -6px rgba(37,99,235,.6), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -6px rgba(37,99,235,.7), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn-ghost-dark { color: #e2e8f0; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.04); }
+.btn-ghost-dark:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.28); }
+.btn-outline { color: var(--text); border: 1px solid var(--border); background: #fff; box-shadow: var(--shadow-sm); }
+.btn-outline:hover { border-color: #cbd5e1; transform: translateY(-1px); }
+.btn-sm { min-height: 40px; padding: 0 16px; font-size: .88rem; border-radius: 10px; }
+
+/* Brand */
+.brand { display: flex; align-items: center; gap: 11px; }
+.brand-mark { width: 38px; height: 38px; border-radius: 11px; background: var(--accent-grad); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(37,99,235,.45), inset 0 1px 0 rgba(255,255,255,.25); flex-shrink: 0; }
+.brand-mark svg { width: 21px; height: 21px; }
+.brand-name { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; letter-spacing: .03em; line-height: 1.1; }
+.brand-name small { display: block; font-family: var(--font); font-weight: 500; font-size: .68rem; letter-spacing: 0; color: #8fa3c2; }
+
+/* Nav */
+.nav { position: fixed; inset: 0 0 auto 0; z-index: 50; transition: background .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease); border-bottom: 1px solid transparent; }
+.nav.scrolled { background: rgba(11,19,36,.86); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px); border-color: rgba(255,255,255,.07); }
+.nav-inner { height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #fff; }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a { display: block; padding: 8px 14px; border-radius: 9px; color: #b6c2d6; font-weight: 500; font-size: .92rem; transition: color .15s, background .15s; }
+.nav-links a:hover { color: #fff; background: rgba(255,255,255,.06); }
+.nav-cta { display: flex; gap: 10px; align-items: center; }
+.menu-btn { display: none; width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(255,255,255,.14); background: transparent; color: #fff; cursor: pointer; align-items: center; justify-content: center; }
+.menu-btn svg { width: 22px; height: 22px; }
+.mobile-menu { display: none; }
+
+/* Hero */
+.hero { position: relative; background: var(--ink); color: #fff; overflow: hidden; padding: 148px 0 96px; }
+.hero::before { content: ''; position: absolute; inset: 0; background:
+  radial-gradient(700px 420px at 82% 18%, rgba(37,99,235,.38), transparent 70%),
+  radial-gradient(520px 360px at 8% 92%, rgba(56,189,248,.14), transparent 70%); pointer-events: none; }
+.hero::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 44px 44px; mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 80%); pointer-events: none; }
+.hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.02fr 1fr; gap: 56px; align-items: center; }
+.kicker { display: inline-flex; align-items: center; gap: 9px; padding: 6px 14px 6px 10px; border-radius: 999px; background: rgba(59,130,246,.14); border: 1px solid rgba(96,165,250,.28); color: #bfdbfe; font-size: .8rem; font-weight: 600; letter-spacing: .01em; }
+.kicker i { width: 8px; height: 8px; border-radius: 50%; background: #60a5fa; box-shadow: 0 0 0 4px rgba(96,165,250,.22); animation: pulse 2.4s infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(96,165,250,0); } }
+.hero h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.5rem, 5.4vw, 4rem); line-height: 1.04; letter-spacing: -.035em; margin: 22px 0 20px; }
+.hero h1 span { background: linear-gradient(90deg, #93c5fd, #60a5fa 45%, #38bdf8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-sub { font-size: 1.12rem; color: #a9b6cb; max-width: 520px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+.hero-note { margin-top: 22px; display: flex; align-items: center; gap: 8px; font-size: .84rem; color: #7c8aa5; }
+.hero-note svg { width: 16px; height: 16px; color: #34d399; }
+
+/* Hero preview (pure CSS mockup) */
+.preview { position: relative; }
+.pv-window { background: #fff; color: var(--text); border-radius: 18px; box-shadow: 0 40px 80px -24px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); overflow: hidden; transform: perspective(1400px) rotateY(-5deg) rotateX(2deg); transition: transform .6s var(--ease); }
+.preview:hover .pv-window { transform: perspective(1400px) rotateY(0) rotateX(0); }
+.pv-bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid var(--border-light); }
+.pv-bar i { width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; }
+.pv-bar span { margin-left: 10px; font-size: .74rem; color: var(--text-muted); font-weight: 500; }
+.pv-body { padding: 18px; }
+.pv-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
+.pv-head b { font-family: var(--font-display); font-size: 1rem; display: block; }
+.pv-head small { font-size: .74rem; color: var(--text-muted); }
+.pv-tag { font-size: .7rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--primary-50); color: var(--primary); border: 1px solid var(--primary-100); }
+.pv-week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.pv-day { min-height: 128px; border: 1px solid var(--border-light); border-radius: 12px; padding: 8px; background: #fbfcfd; display: flex; flex-direction: column; gap: 6px; }
+.pv-day small { font-size: .64rem; font-weight: 700; color: #94a3b8; letter-spacing: .06em; }
+.pv-day small b { display: block; font-size: 1rem; color: var(--text); font-family: var(--font-display); letter-spacing: 0; }
+.pill { font-size: .66rem; font-weight: 700; padding: 5px 7px; border-radius: 7px; border-left: 3px solid; line-height: 1.25; }
+.pill em { display: block; font-style: normal; font-weight: 500; opacity: .8; }
+.pill.ok { background: var(--success-bg); color: var(--success); border-color: #10b981; }
+.pill.wait { background: var(--warning-bg); color: var(--warning); border-color: #f59e0b; }
+.float { position: absolute; background: #fff; color: var(--text); border-radius: 14px; padding: 12px 14px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 11px; font-size: .82rem; font-weight: 600; animation: bob 6s ease-in-out infinite; }
+.float .dot { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.float .dot svg { width: 16px; height: 16px; }
+.float small { display: block; font-weight: 500; color: var(--text-muted); font-size: .72rem; }
+.float-ok { left: -28px; bottom: 56px; }
+.float-ok .dot { background: var(--success-bg); color: var(--success); }
+.float-clash { right: -18px; top: -22px; animation-delay: -3s; max-width: 250px; }
+.float-clash .dot { background: var(--danger-bg); color: var(--danger); }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+
+/* Logos / trust strip */
+.strip { background: var(--ink-2); color: #8fa3c2; border-top: 1px solid rgba(255,255,255,.06); }
+.strip-inner { display: grid; grid-template-columns: repeat(4, 1fr); }
+.stat { padding: 28px 24px; border-left: 1px solid rgba(255,255,255,.06); }
+.stat:first-child { border-left: 0; }
+.stat b { display: block; font-family: var(--font-display); font-size: 1.7rem; color: #fff; font-weight: 800; letter-spacing: -.02em; }
+.stat span { font-size: .86rem; }
+
+/* Sections */
+section { scroll-margin-top: 72px; }
+.section { padding: 104px 0; }
+.section-alt { background: var(--bg); }
+.eyebrow { font-size: .8rem; font-weight: 700; color: var(--primary-light); text-transform: uppercase; letter-spacing: .1em; }
+.section-head { max-width: 640px; margin-bottom: 56px; }
+.section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.section-head h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.9rem, 3.6vw, 2.6rem); line-height: 1.12; letter-spacing: -.028em; margin: 12px 0 14px; }
+.section-head p { color: var(--text-muted); font-size: 1.06rem; }
+
+/* Features */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); }
+.feature:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--primary-200); }
+.f-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--primary-50); color: var(--primary); border: 1px solid var(--primary-100); margin-bottom: 20px; }
+.f-icon svg { width: 22px; height: 22px; }
+.feature h3 { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -.01em; margin-bottom: 8px; }
+.feature p { color: var(--text-muted); font-size: .95rem; }
+.feature.wide { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+.clash-demo { background: var(--bg); border: 1px solid var(--border-light); border-radius: 14px; padding: 16px; font-size: .84rem; }
+.cd-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: #fff; border: 1px solid var(--border-light); border-radius: 10px; }
+.cd-row + .cd-row { margin-top: 8px; }
+.cd-row b { font-weight: 700; }
+.cd-row small { color: var(--text-muted); display: block; font-size: .74rem; }
+.badge { font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid; }
+.badge.ok { color: var(--success); background: var(--success-bg); border-color: var(--success-bd); }
+.badge.no { color: var(--danger); background: var(--danger-bg); border-color: var(--danger-bd); }
+.badge.wait { color: var(--warning); background: var(--warning-bg); border-color: var(--warning-bd); }
+
+/* Steps */
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; position: relative; }
+.steps::before { content: ''; position: absolute; top: 23px; left: 12%; right: 12%; height: 2px; background: repeating-linear-gradient(90deg, var(--primary-200) 0 8px, transparent 8px 16px); }
+.step { position: relative; text-align: center; padding: 0 8px; }
+.step-num { width: 48px; height: 48px; margin: 0 auto 20px; border-radius: 50%; background: #fff; border: 2px solid var(--primary-200); color: var(--primary); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; position: relative; box-shadow: 0 0 0 6px var(--bg); }
+.step:last-child .step-num { background: var(--accent-grad); color: #fff; border-color: transparent; }
+.step h3 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+.step p { color: var(--text-muted); font-size: .92rem; }
+.step .who { display: inline-block; margin-bottom: 10px; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); background: #fff; border: 1px solid var(--border); padding: 3px 10px; border-radius: 999px; }
+
+/* Roles */
+.roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.role { border-radius: var(--radius-xl); padding: 32px; border: 1px solid var(--border); background: #fff; display: flex; flex-direction: column; }
+.role.featured { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: var(--shadow-lg); }
+.role-tag { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--primary-light); }
+.role.featured .role-tag { color: #93c5fd; }
+.role h3 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; margin: 8px 0 6px; }
+.role > p { color: var(--text-muted); font-size: .94rem; margin-bottom: 22px; }
+.role.featured > p { color: #a9b6cb; }
+.role ul { list-style: none; display: grid; gap: 12px; margin-bottom: 28px; flex: 1; }
+.role li { display: flex; gap: 10px; font-size: .93rem; color: var(--text-2); }
+.role.featured li { color: #dbe4f0; }
+.role li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 3px; color: var(--success); }
+.role.featured li svg { color: #34d399; }
+.role .btn { width: 100%; }
+
+/* FAQ */
+.faq { max-width: 780px; margin: 0 auto; display: grid; gap: 12px; }
+.faq details { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); transition: border-color .2s, box-shadow .2s; }
+.faq details[open] { border-color: var(--primary-200); box-shadow: var(--shadow-sm); }
+.faq summary { list-style: none; cursor: pointer; padding: 20px 24px; font-weight: 600; font-size: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ''; width: 10px; height: 10px; border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); transform: rotate(45deg) translateY(-3px); transition: transform .2s var(--ease); flex-shrink: 0; }
+.faq details[open] summary::after { transform: rotate(-135deg) translateY(-3px); }
+.faq details p { padding: 0 24px 22px; color: var(--text-muted); font-size: .95rem; }
+
+/* CTA */
+.cta { padding: 0 0 104px; }
+.cta-card { position: relative; overflow: hidden; background: var(--ink); color: #fff; border-radius: 28px; padding: 64px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
+.cta-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(520px 300px at 90% 0%, rgba(37,99,235,.45), transparent 70%); pointer-events: none; }
+.cta-card > * { position: relative; }
+.cta-card h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 3.4vw, 2.4rem); letter-spacing: -.03em; line-height: 1.12; margin-bottom: 12px; }
+.cta-card p { color: #a9b6cb; }
+.cta-actions { display: flex; flex-direction: column; gap: 12px; }
+
+/* Footer */
+footer { border-top: 1px solid var(--border); padding: 36px 0; color: var(--text-muted); font-size: .88rem; }
+.foot { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+footer .brand-name { color: var(--text); }
+footer .brand-name small { color: var(--text-muted); }
+.foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+.foot-links a:hover { color: var(--primary); }
+
+/* Reveal on scroll */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 64px; }
+  .hero-copy { text-align: center; }
+  .hero-sub { margin: 0 auto; }
+  .hero-actions, .hero-note { justify-content: center; }
+  .preview { max-width: 580px; margin: 0 auto; width: 100%; }
+  .features { grid-template-columns: 1fr 1fr; }
+  .feature.wide { grid-column: span 2; }
+  .roles { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
+  .cta-card { grid-template-columns: 1fr; padding: 48px; }
+  .cta-actions { flex-direction: row; flex-wrap: wrap; }
+}
+@media (max-width: 860px) {
+  .nav-links, .nav-cta .btn-ghost-dark { display: none; }
+  .menu-btn { display: inline-flex; }
+  .mobile-menu.open { display: block; position: fixed; top: 72px; left: 0; right: 0; background: rgba(11,19,36,.97); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 12px 24px 24px; border-bottom: 1px solid rgba(255,255,255,.08); z-index: 49; }
+  .mobile-menu a { display: block; padding: 14px 4px; color: #dbe4f0; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .mobile-menu .btn { margin-top: 18px; width: 100%; color: #e2e8f0; }
+  .strip-inner { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(3) { border-left: 0; }
+  .stat:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.06); }
+  .steps { grid-template-columns: 1fr 1fr; row-gap: 44px; }
+  .steps::before { display: none; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 20px; }
+  .hero { padding: 120px 0 72px; }
+  .section { padding: 76px 0; }
+  .features { grid-template-columns: 1fr; }
+  .feature.wide { grid-column: auto; grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .pv-week { gap: 5px; }
+  .pv-day { min-height: 110px; padding: 6px; }
+  .pill { font-size: .6rem; padding: 4px 5px; }
+  .pill em { display: none; }
+  .float-ok { left: -6px; bottom: -48px; }
+  .hero { padding-bottom: 96px; }
+  .stat { padding: 22px 16px; }
+  .stat b { font-size: 1.35rem; white-space: nowrap; }
+  .stat span { font-size: .8rem; line-height: 1.45; display: block; }
+  .float-clash { right: -6px; top: -40px; }
+  .pv-window { transform: none; }
+  .cta-card { padding: 36px 24px; border-radius: 22px; }
+  .cta-actions .btn { width: 100%; }
+  .hero-actions .btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Nav -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="ATUR home">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18"/><path d="M8 2.5v4"/><path d="M16 2.5v4"/><path d="M8.5 15l2.5 2.5 4.5-5"/></svg></span>
+      <span class="brand-name">ATUR<small>Academic Timetable Utility &amp; Registry</small></span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#roles">Who it's for</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-sm btn-ghost-dark" data-link="public" href="#">Public schedule</a>
+      <a class="btn btn-sm btn-primary" data-link="app" href="#">Sign in</a>
+      <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#roles">Who it's for</a>
+    <a href="#faq">FAQ</a>
+    <a class="btn btn-ghost-dark" data-link="public" href="#">View public schedule</a>
+  </div>
+</header>
+
+<main id="main">
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="kicker"><i></i>Final assessment scheduling · FSR UiTM</span>
+      <h1>Every exam date, <span>clash-free.</span></h1>
+      <p class="hero-sub">Resource persons propose dates, ATUR checks every program and semester for clashes, and admins approve the final schedule in one place.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" data-link="app" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+          Sign in with UiTM Google
+        </a>
+        <a class="btn btn-ghost-dark" data-link="public" href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>
+          View exam schedule
+        </a>
+      </div>
+      <p class="hero-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>No new password. Sign in with your UiTM Google account.</p>
+    </div>
+
+    <div class="preview" aria-hidden="true">
+      <div class="pv-window">
+        <div class="pv-bar"><i></i><i></i><i></i><span>ATUR · Calendar</span></div>
+        <div class="pv-body">
+          <div class="pv-head">
+            <div><b>Week 16 · SR241 Sem 3</b><small>Final assessment period</small></div>
+            <span class="pv-tag">MAC – JULAI 2026</span>
+          </div>
+          <div class="pv-week">
+            <div class="pv-day"><small>MON<b>20</b></small><span class="pill ok">SMG402<em>9:00 AM</em></span></div>
+            <div class="pv-day"><small>TUE<b>21</b></small></div>
+            <div class="pv-day"><small>WED<b>22</b></small><span class="pill ok">SPS301<em>9:00 AM</em></span><span class="pill wait">SRC310<em>2:30 PM</em></span></div>
+            <div class="pv-day"><small>THU<b>23</b></small></div>
+            <div class="pv-day"><small>FRI<b>24</b></small><span class="pill wait">SMG415<em>9:00 AM</em></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="float float-ok">
+        <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>
+        <div>SMG402 approved<small>Linked programs updated</small></div>
+      </div>
+      <div class="float float-clash">
+        <span class="dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg></span>
+        <div>Clash blocked<small>SR241 Sem 3 already has SPS301 on 22 Jul</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="strip">
+  <div class="wrap strip-inner">
+    <div class="stat"><b>1 place</b><span>for every program's exam dates</span></div>
+    <div class="stat"><b>3 formats</b><span>PDF, Excel and CSV exports</span></div>
+    <div class="stat"><b>Auto</b><span>deadline reminders by email</span></div>
+    <div class="stat"><b>100%</b><span>of changes in the audit log</span></div>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Features</span>
+      <h2>Built for the way the faculty actually schedules exams.</h2>
+      <p>No more chasing spreadsheets over email. ATUR keeps course lists, proposed dates and approvals together, and stops clashes before anyone has to spot them.</p>
+    </div>
+
+    <div class="features">
+      <article class="feature wide reveal">
+        <div>
+          <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Clash detection as you pick a date</h3>
+          <p>When a resource person chooses a date, ATUR checks every program and semester the course is offered in. If the same cohort already has an assessment that day, the date is rejected before it's submitted.</p>
+        </div>
+        <div class="clash-demo" aria-hidden="true">
+          <div class="cd-row"><div><b>SMG402</b><small>SR241 · Sem 3 · 20 Jul</small></div><span class="badge ok">Clear</span></div>
+          <div class="cd-row"><div><b>SRC310</b><small>SR241 · Sem 3 · 22 Jul</small></div><span class="badge no">Clash</span></div>
+          <div class="cd-row"><div><b>SMG415</b><small>SR243 · Sem 5 · 24 Jul</small></div><span class="badge wait">Pending</span></div>
+        </div>
+      </article>
+
+      <article class="feature reveal">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3>One-click approvals</h3>
+        <p>Approve or reject from a single queue with remarks. Courses shared across programs move together, so one decision updates every linked offering.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
+        <h3>Deadline reminders</h3>
+        <p>Resource persons get one email listing every course still missing a date, on the days you choose before the session ends. Admins get a daily summary.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div>
+        <h3>CSV course import</h3>
+        <p>Load a whole session's study plans, courses and resource persons from one template. Re-uploading is safe: submitted dates and approvals are never overwritten.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2"/></svg></div>
+        <h3>Calendar views</h3>
+        <p>See the whole faculty's assessment period by month, or just your own courses. The calendar opens on the next upcoming exam, not an empty month.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6M9 15l3 3 3-3"/></svg></div>
+        <h3>Exports &amp; public schedule</h3>
+        <p>Download the approved schedule as PDF, Excel or CSV, and share a read-only public link students can search, filter and print.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+        <h3>Secure by default</h3>
+        <p>Sign in with your UiTM Google account. Only registered users get in, every action is checked against your role, and every change is written to the audit log.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section section-alt" id="how">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <span class="eyebrow">How it works</span>
+      <h2>From course list to published schedule in four steps.</h2>
+      <p>Each person does only their part. ATUR handles the checking, the reminders and the paperwork.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <span class="who">Admin</span>
+        <h3>Import the courses</h3>
+        <p>Upload the session's study plans, courses and resource persons from a CSV template.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <span class="who">Resource person</span>
+        <h3>Propose a date</h3>
+        <p>Answer the assessment-format questions and pick a date and time on <em>My Courses</em>.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <span class="who">ATUR</span>
+        <h3>Check for clashes</h3>
+        <p>Every linked program and semester is checked instantly. Clashing dates never reach the queue.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <span class="who">Admin</span>
+        <h3>Approve &amp; publish</h3>
+        <p>Approve from the queue. The public schedule and exports update straight away.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Roles -->
+<section class="section" id="roles">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <span class="eyebrow">Who it's for</span>
+      <h2>One system, three views.</h2>
+      <p>Everyone sees what they need, and nothing they shouldn't.</p>
+    </div>
+    <div class="roles">
+      <div class="role reveal">
+        <span class="role-tag">Resource persons</span>
+        <h3>Submit in minutes</h3>
+        <p>Lecturers responsible for a course.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>See every assigned course, with what still needs a date listed first</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Instant clash feedback while choosing a date</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Email when a date is approved or needs changing</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Download your own courses as a PDF</li>
+        </ul>
+        <a class="btn btn-outline" data-link="app" href="#">Go to My Courses</a>
+      </div>
+
+      <div class="role featured reveal">
+        <span class="role-tag">Administrators</span>
+        <h3>Stay in control</h3>
+        <p>Faculty academic office and program coordinators.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Dashboard with progress and what needs attention</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Approval queue with remarks and linked offerings</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Manage sessions, study plans, courses and users</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>PDF, Excel and CSV exports and a full audit trail</li>
+        </ul>
+        <a class="btn btn-primary" data-link="app" href="#">Open the dashboard</a>
+      </div>
+
+      <div class="role reveal">
+        <span class="role-tag">Students</span>
+        <h3>Know your dates</h3>
+        <p>No login needed for the public schedule.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Only approved, official dates</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Search by course, filter by program and semester</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Agenda by day with a "next exam" countdown</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Print a clean A4 copy of your list</li>
+        </ul>
+        <a class="btn btn-outline" data-link="public" href="#">View exam schedule</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section-alt" id="faq">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2>Common questions</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>How do I sign in?</summary>
+        <p>Open ATUR while signed in to your UiTM Google account (@uitm.edu.my). There's no separate password. If your browser is signed in to several Google accounts, switch to your UiTM one first.</p>
+      </details>
+      <details>
+        <summary>I can't get in. What should I do?</summary>
+        <p>Only registered users can open the dashboard. Ask your faculty ATUR administrator to add your UiTM email. If you were recently assigned a course, you may already be registered through the course import.</p>
+      </details>
+      <details>
+        <summary>What happens if my chosen date clashes?</summary>
+        <p>ATUR tells you straight away which course already occupies that date for the same program and semester. Pick another date and submit again. Clashing dates are never sent for approval.</p>
+      </details>
+      <details>
+        <summary>Can I change a date after submitting?</summary>
+        <p>Yes. Use <em>Edit / resubmit</em> on My Courses. The new date goes back to the approval queue. If an admin rejects a date, you'll get an email with their remarks and the course moves to the top of your list.</p>
+      </details>
+      <details>
+        <summary>Do students need an account to see the schedule?</summary>
+        <p>No. The public schedule page is read-only and shows only approved dates. It doesn't show resource persons' email addresses.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta" aria-label="Get started">
+  <div class="wrap">
+    <div class="cta-card reveal">
+      <div>
+        <h2>Ready to schedule this session's final assessments?</h2>
+        <p>Sign in with your UiTM Google account to open your courses or the admin dashboard.</p>
+      </div>
+      <div class="cta-actions">
+        <a class="btn btn-primary" data-link="app" href="#">Sign in to ATUR</a>
+        <a class="btn btn-ghost-dark" data-link="public" href="#">View public schedule</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18"/><path d="M8 2.5v4"/><path d="M16 2.5v4"/><path d="M8.5 15l2.5 2.5 4.5-5"/></svg></span>
+      <span class="brand-name">ATUR<small>Faculty of Sports Science and Recreation · Universiti Teknologi MARA</small></span>
+    </div>
+    <div class="foot-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <span>© <span id="year">2026</span> FSR UiTM</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG — paste your Apps Script web app URL here.
+   APP_URL:    the /exec URL from Deploy → Manage deployments
+   PUBLIC_URL: the link from Schedule Download → Copy Public Link
+               (leave empty to use APP_URL + "?view=public")
+   ============================================================ */
+var APP_URL = 'http://fsrshahalam.github.io/atur/app';
+var PUBLIC_URL = 'https://script.google.com/macros/s/AKfycbzAfbhTTMhTaUjygxik9Trv0hHWSCItFY0mkidEqF_NTvXBL-HxYLZIGHXNzaTJuuc/exec';
+
+(function () {
+  var pub = PUBLIC_URL || (APP_URL ? APP_URL + (APP_URL.indexOf('?') > -1 ? '&' : '?') + 'view=public' : '');
+  document.querySelectorAll('[data-link]').forEach(function (a) {
+    var url = a.getAttribute('data-link') === 'public' ? pub : APP_URL;
+    if (url) { a.href = url; a.rel = 'noopener'; }
+    else a.addEventListener('click', function (e) { e.preventDefault(); alert('The ATUR link has not been set up yet. Please contact the faculty ATUR administrator.'); });
+  });
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  var nav = document.getElementById('nav');
+  var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 12); };
+  onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+  var btn = document.getElementById('menu-btn'), menu = document.getElementById('mobile-menu');
+  var setMenu = function (open) { menu.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); nav.classList.toggle('scrolled', open || window.scrollY > 12); };
+  btn.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+  menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+</body>
+</html>

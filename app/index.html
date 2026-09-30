@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1324" />
+  <meta name="robots" content="noindex" />
+
+  <!-- Without JavaScript, fall back to a plain meta redirect.
+       (With JS, the script below redirects first and keeps any ?view=… parameters.) -->
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=https://script.google.com/a/macros/uitm.edu.my/s/AKfycbzAfbhTTMhTaUjygxik9Trv0hHWSCItFY0mkidEqF_NTvXBL-HxYLZIGHXNzaTJuuc/exec" />
+  </noscript>
+
+  <link rel="preconnect" href="https://script.google.com" />
+  <title>Opening ATUR…</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Cg fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 4)'%3E%3Crect x='3' y='4.5' width='18' height='16.5' rx='3'/%3E%3Cpath d='M3 9.5h18M8 2.5v4M16 2.5v4M8.5 15l2.5 2.5 4.5-5'/%3E%3C/g%3E%3C/svg%3E" />
+
+  <!-- No external fonts, scripts or images: nothing here can be slowed or blocked by the campus network. -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0b1324;
+      --blue-700: #1d4ed8;
+      --blue-600: #2563eb;
+      --blue-500: #3b82f6;
+      --blue-400: #60a5fa;
+      --blue-300: #93c5fd;
+      --sky-400: #38bdf8;
+      --muted: #8fa3c2;
+      --accent-grad: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      color: #fff;
+      padding: 24px 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(37,99,235,.38), transparent 44%),
+        radial-gradient(circle at 18% 85%, rgba(56,189,248,.13), transparent 36%);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 28px;
+      padding: 3rem 2.5rem 2.6rem;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      box-shadow: 0 28px 80px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--accent-grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 10px 32px rgba(37,99,235,.5), inset 0 1px 0 rgba(255,255,255,.25);
+      animation: float 2.6s ease-in-out infinite;
+    }
+    .logo svg { width: 36px; height: 36px; color: #fff; }
+    @keyframes float { 50% { transform: translateY(-3px); box-shadow: 0 14px 44px rgba(96,165,250,.6), inset 0 1px 0 rgba(255,255,255,.25); } }
+
+    .system-name { font-size: 2rem; font-weight: 800; letter-spacing: .02em; margin-bottom: .3rem; }
+    .system-sub {
+      font-size: .74rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 2.2rem;
+    }
+
+    .status { display: flex; align-items: center; justify-content: center; gap: .8rem; margin-bottom: 1.15rem; }
+    .spinner {
+      width: 20px; height: 20px; flex-shrink: 0;
+      border: 2.5px solid rgba(255,255,255,.16);
+      border-top-color: var(--blue-400);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-text { font-size: .92rem; font-weight: 600; color: rgba(255,255,255,.82); }
+
+    .progress-track { height: 4px; background: rgba(255,255,255,.1); border-radius: 999px; overflow: hidden; margin-bottom: 1.9rem; }
+    .progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--blue-600), var(--blue-400), var(--sky-400));
+      border-radius: 999px;
+      box-shadow: 0 0 18px rgba(96,165,250,.6);
+      animation: progress 2.4s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes progress { 60% { width: 78%; } 100% { width: 100%; } }
+
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: .55rem;
+      width: 100%; min-height: 48px; padding: 0 1.2rem;
+      border-radius: 13px; font: inherit; font-weight: 650; font-size: .95rem;
+      text-decoration: none; transition: transform .18s, box-shadow .18s, background .18s;
+    }
+    .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .btn-primary { background: var(--accent-grad); color: #fff; box-shadow: 0 8px 22px -6px rgba(37,99,235,.7), inset 0 1px 0 rgba(255,255,255,.2); }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-ghost { margin-top: .7rem; color: #dbe4f0; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.04); }
+    .btn-ghost:hover { background: rgba(255,255,255,.09); }
+    .btn:focus-visible { outline: 3px solid var(--blue-300); outline-offset: 3px; }
+
+    .manual { font-size: .8rem; color: rgba(255,255,255,.45); margin-top: 1.1rem; line-height: 1.6; }
+
+    /* Shown only if the browser is still on this page after a few seconds */
+    .help {
+      display: none;
+      text-align: left;
+      margin-top: 1.5rem;
+      padding: 1rem 1.1rem;
+      border-radius: 14px;
+      background: rgba(245,158,11,.08);
+      border: 1px solid rgba(251,191,36,.25);
+      font-size: .82rem;
+      color: rgba(255,255,255,.78);
+      line-height: 1.55;
+    }
+    .help.show { display: block; animation: fade .4s ease; }
+    .help b { color: #fcd34d; display: block; margin-bottom: .35rem; font-size: .86rem; }
+    .help ol { padding-left: 1.1rem; display: grid; gap: .35rem; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } }
+
+    .foot { margin-top: 1.6rem; font-size: .72rem; color: rgba(255,255,255,.32); }
+
+    @media (max-width: 480px) {
+      .card { padding: 2.5rem 1.5rem 2.2rem; border-radius: 24px; }
+      .system-name { font-size: 1.75rem; }
+      .system-sub { font-size: .66rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .progress-fill { width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card" aria-live="polite">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18"/><path d="M8 2.5v4"/><path d="M16 2.5v4"/><path d="M8.5 15l2.5 2.5 4.5-5"/>
+      </svg>
+    </div>
+
+    <div class="system-name">ATUR</div>
+    <div class="system-sub">Academic Timetable Utility &amp; Registry</div>
+
+    <div class="status">
+      <div class="spinner" id="spinner" aria-hidden="true"></div>
+      <div class="status-text" id="status-text">Opening ATUR…</div>
+    </div>
+
+    <div class="progress-track" aria-hidden="true"><div class="progress-fill"></div></div>
+
+    <a class="btn btn-primary" id="open-link" href="https://script.google.com/a/macros/uitm.edu.my/s/AKfycbzAfbhTTMhTaUjygxik9Trv0hHWSCItFY0mkidEqF_NTvXBL-HxYLZIGHXNzaTJuuc/exec">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+      <span id="open-label">Open ATUR</span>
+    </a>
+    <p class="manual">Not redirected automatically? Tap the button above.</p>
+
+    <div class="help" id="help" role="note">
+      <b>Taking longer than usual?</b>
+      <ol>
+        <li>Try the <strong>alternative link</strong> below. It opens the same system.</li>
+        <li>On UiTM Wi-Fi, make sure you've logged in to the Wi-Fi portal first, then reload.</li>
+        <li>Signed in to several Google accounts? Switch to your <strong>@uitm.edu.my</strong> account, or open the link in a private/incognito window.</li>
+      </ol>
+      <a class="btn btn-ghost" id="alt-link" href="https://script.google.com/macros/s/AKfycbzAfbhTTMhTaUjygxik9Trv0hHWSCItFY0mkidEqF_NTvXBL-HxYLZIGHXNzaTJuuc/exec">Try alternative link</a>
+    </div>
+
+    <div class="foot">Faculty of Sports Science and Recreation · UiTM</div>
+  </main>
+
+  <script>
+    (function () {
+      // ATUR Apps Script deployment ID (Deploy → Manage deployments).
+      var DEPLOYMENT_ID = 'AKfycbzAfbhTTMhTaUjygxik9Trv0hHWSCItFY0mkidEqF_NTvXBL-HxYLZIGHXNzaTJuuc';
+
+      // Domain URL: picks the UiTM Google account even when several accounts are signed in.
+      var PRIMARY_URL = 'https://script.google.com/a/macros/uitm.edu.my/s/' + DEPLOYMENT_ID + '/exec';
+      // Generic URL: same web app, used as the fallback link.
+      var ALT_URL = 'https://script.google.com/macros/s/' + DEPLOYMENT_ID + '/exec';
+
+      // Forward any parameters, e.g. /app?view=public&session=SESS-xxxx opens the public schedule.
+      var qs = window.location.search || '';
+      var target = PRIMARY_URL + qs;
+      var alt = ALT_URL + qs;
+
+      var isPublic = /[?&]view=public(&|$)/.test(qs);
+      if (isPublic) {
+        document.title = 'Opening exam schedule…';
+        document.getElementById('status-text').textContent = 'Opening the exam schedule…';
+        document.getElementById('open-label').textContent = 'Open exam schedule';
+      }
+
+      document.getElementById('open-link').href = target;
+      document.getElementById('alt-link').href = alt;
+
+      // If the browser is still here after a few seconds, the redirect was blocked or is slow:
+      // show the help box and the alternative link.
+      setTimeout(function () {
+        document.getElementById('help').className += ' show';
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('status-text').textContent = 'Still waiting for Google…';
+      }, 5000);
+
+      // Coming back with the browser's Back button restores this page from cache: don't bounce again.
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted) {
+          document.getElementById('help').className = 'help show';
+          document.getElementById('spinner').style.display = 'none';
+          document.getElementById('status-text').textContent = 'Choose a link to open ATUR.';
+        }
+      });
+
+      window.location.replace(target);
+    })();
+  </script>
+</body>
+</html>
